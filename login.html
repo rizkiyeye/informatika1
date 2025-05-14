@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login dengan Petir & Hujan</title>
+  <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #000;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Rain Effects */
+    .rain {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 20" preserveAspectRatio="none"><path d="M1 0L1 20" stroke="rgba(180,220,255,0.3)" stroke-width="0.5"/></svg>');
+        background-size: 3px 25px;
+        animation: rain 0.8s linear infinite;
+        z-index: 0;
+        opacity: 0.6;
+    }
+
+    @keyframes rain {
+        0% { background-position: 0 0; }
+        100% { background-position: -5% 100%; }
+    }
+
+    /* Lightning flash overlay */
+    .lightning {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: white;
+        opacity: 0;
+        z-index: 1;
+        animation: flash 10s infinite;
+    }
+
+    @keyframes flash {
+        0%, 92%, 100% { opacity: 0; }
+        93% { opacity: 0.7; }
+        93.3% { opacity: 0; }
+        93.6% { opacity: 0.5; }
+        94% { opacity: 0; }
+    }
+
+    .bolt-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .bolt {
+        position: absolute;
+        top: -100%;
+        left: 50%;
+        width: 2px;
+        height: 200%;
+        background: linear-gradient(to bottom, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.7) 30%, 
+            rgba(255,255,255,0.4) 50%, 
+            rgba(255,255,255,0) 100%);
+        transform: translateX(-50%) rotate(5deg);
+        opacity: 0;
+        filter: blur(0.8px);
+        animation: strike 10s infinite;
+    }
+
+    .bolt:nth-child(2) {
+        left: 48%;
+        transform: translateX(-50%) rotate(-5deg);
+        animation-delay: 0.1s;
+    }
+
+    /* New bolt that strikes the login form directly */
+    .bolt.strike-form {
+        left: 50%;
+        transform: translateX(-50%) rotate(0deg);
+        animation: strikeForm 10s infinite;
+    }
+
+    @keyframes strike {
+        0%, 92%, 100% {
+            top: -100%;
+            opacity: 0;
+        }
+        93% {
+            top: 20%;
+            opacity: 1;
+        }
+        94% {
+            top: 100%;
+            opacity: 0;
+        }
+    }
+
+    @keyframes strikeForm {
+        0%, 91.9%, 100% {
+            top: -150%;
+            opacity: 0;
+        }
+        93% {
+            top: 30%;
+            opacity: 1;
+        }
+        94% {
+            top: 65%;
+            opacity: 0;
+        }
+    }
+
+    form {
+        position: relative;
+        z-index: 3;
+        width: 320px;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.96);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        animation: floatIn 1.5s ease-out;
+        transition: all 0.3s;
+    }
+
+    @keyframes floatIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #222;
+        font-size: 28px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #444;
+        font-weight: 500;
+    }
+
+    input[type="email"], input[type="password"] {
+        width: 100%;
+        height: 42px;
+        margin-bottom: 20px;
+        padding: 0 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+        background-color: rgba(255,255,255,0.9);
+    }
+
+    input[type="email"]:focus, input[type="password"]:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+        outline: none;
+        background-color: white;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        height: 45px;
+        background: linear-gradient(135deg, #4CAF50, #2e7d32);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    input[type="submit"]:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #4CAF50;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    a:hover {
+        color: #2e7d32;
+    }
+
+    .lightning-active {
+        animation: formFlash 0.5s;
+    }
+
+    @keyframes formFlash {
+        0% { box-shadow: 0 0 10px rgba(255,255,255,0.7); }
+        50% { box-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="rain"></div>
+  <div class="lightning"></div>
+
+  <div class="bolt-container">
+    <div class="bolt"></div>
+    <div class="bolt"></div>
+    <div class="bolt strike-form"></div>
+  </div>
+
+  <form id="loginForm">
+    <h1>Login</h1>
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Masukkan email" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Masukkan password" required>
+    <input type="submit" value="Masuk">
+    <a href="#">Lupa Password?</a>
+  </form>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const lightning = document.querySelector('.lightning');
+    const bolts = document.querySelectorAll('.bolt');
+    const rain = document.querySelector('.rain');
+
+    lightning.addEventListener('animationiteration', () => {
+        form.classList.add('lightning-active');
+        form.style.transform = 'translateY(-2px) scale(1.02)';
+        setTimeout(() => {
+            form.classList.remove('lightning-active');
+            form.style.transform = '';
+        }, 500);
+    });
+
+    bolts.forEach((bolt, index) => {
+        bolt.style.animationDelay = `${Math.random() * 0.3}s`;
+    });
+
+    lightning.addEventListener('animationstart', () => {
+        rain.style.opacity = '0.7';
+        setTimeout(() => {
+            rain.style.opacity = '0.6';
+        }, 500);
+    });
+  </script>
+
+</body>
+</html>
